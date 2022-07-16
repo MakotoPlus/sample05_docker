@@ -21,6 +21,10 @@ COPY $DOCKER_DIR/requirements.txt requirements.txt
 # python ライブラリインストール
 RUN pip install -r ./requirements.txt
 
+# EXPOSE 8000
+
 WORKDIR $PRJ_DIR
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["uwsgi", "--socket", ":8000", "--chdir", "/workspace/mysite", "--wsgi-file", "mysite/wsgi.py"]
+CMD ["uwsgi", "--socket", ":8000", "--chdir", "/sample05_docker/myproject", "--wsgi-file", "myproject/wsgi.py"]
 
