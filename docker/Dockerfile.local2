@@ -3,7 +3,8 @@ USER root
 
 
 ENV DOCKER_DIR="./sample05_docker/docker"
-ENV PRJ_DIR="./sample05_docker/myproject"
+ENV PRJ_DIR="/sample05_docker/myproject"
+ENV COPY_DIR="/sample05_docker/myproject"
 
 RUN apt-get update
 RUN apt-get -y install locales && \
@@ -17,11 +18,17 @@ RUN apt-get install -y vim less
 
 # コンテナ側へコピー
 COPY $DOCKER_DIR/requirements.txt requirements.txt
-
 # python ライブラリインストール
 RUN pip install -r ./requirements.txt
 
-# EXPOSE 8000
+# アプリケーションディレクトリ
+RUN mkdir -p $COPY_DIR
+# モジュールをコピー
+# このディレクトリ名はコピーされないちょっとUNIXとは挙動が違う
+COPY $COPY_DIR $COPY_DIR/.
+
+
+EXPOSE 8000
 
 WORKDIR $PRJ_DIR
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

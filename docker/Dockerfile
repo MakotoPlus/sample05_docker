@@ -1,1 +1,35 @@
-test
+FROM python:3.8
+USER root
+
+ENV DOCKER_DIR="./sample05_docker/docker"
+ENV PRJ_DIR="/sample05_docker/myproject"
+ENV COPY_DIR="/sample05_docker/myproject"
+
+RUN apt-get update
+RUN apt-get -y install locales && \
+    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL ja_JP.UTF-8
+ENV TZ JST-9
+ENV TERM xterm
+RUN apt-get install -y vim less
+
+# コンテナ側へコピー
+COPY $DOCKER_DIR/requirements.txt requirements.txt
+# python ライブラリインストール
+RUN pip install -r ./requirements.txt
+
+# アプリケーションディレクトリ
+RUN mkdir -p $COPY_DIR
+# モジュールをコピー
+# このディレクトリ名はコピーされないUNIXなどのCopyコマンドとは挙動が違う
+# なんじゃこれ。。
+COPY $COPY_DIR $COPY_DIR/.
+
+EXPOSE 8000
+
+WORKDIR $PRJ_DIR
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["uwsgi", "--socket", ":8000", "--chdir", "/sample05_docker/myproject", "--wsgi-file", "myproject/wsgi.py"]
+
