@@ -2,8 +2,8 @@ FROM python:3.8
 USER root
 
 
-ENV DOCKER_DIR="./sample05_docker/docker"
-ENV PRJ_DIR="./sample05_docker/myproject"
+ENV DOCKER_DIR="./docker"
+ENV PRJ_DIR="./myproject"
 
 RUN apt-get update
 RUN apt-get -y install locales && \
@@ -25,5 +25,5 @@ RUN pip install -r ./requirements.txt
 
 WORKDIR $PRJ_DIR
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["uwsgi", "--socket", ":8000", "--chdir", "/sample05_docker/myproject", "--wsgi-file", "myproject/wsgi.py"]
+CMD ["uwsgi", "--socket", ":8000", "--chdir", "./myproject", "--wsgi-file", "myproject/wsgi.py"]
 

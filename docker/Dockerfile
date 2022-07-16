@@ -1,9 +1,11 @@
 FROM python:3.8
 USER root
 
-ENV DOCKER_DIR="./sample05_docker/docker"
-ENV PRJ_DIR="/sample05_docker/myproject"
-ENV COPY_DIR="/sample05_docker/myproject"
+
+ENV DOCKER_DIR="./docker"
+ENV PRJ_DIR="./myproject"
+ENV COPY_DIR="./myproject"
+ENV WSGI_PY="myproject/wsgi.py"
 
 RUN apt-get update
 RUN apt-get -y install locales && \
@@ -21,15 +23,12 @@ COPY $DOCKER_DIR/requirements.txt requirements.txt
 RUN pip install -r ./requirements.txt
 
 # アプリケーションディレクトリ
-RUN mkdir -p $COPY_DIR
+WORKDIR $PRJ_DIR
 # モジュールをコピー
-# このディレクトリ名はコピーされないUNIXなどのCopyコマンドとは挙動が違う
-# なんじゃこれ。。
-COPY $COPY_DIR $COPY_DIR/.
+# このディレクトリ名はコピーされないちょっとUNIXとは挙動が違う
+COPY $COPY_DIR $PRJ_DIR/.
 
 EXPOSE 8000
 
-WORKDIR $PRJ_DIR
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["uwsgi", "--socket", ":8000", "--chdir", "/sample05_docker/myproject", "--wsgi-file", "myproject/wsgi.py"]
+CMD ["sh", "-c", "uwsgi --socket :8000 --chdir $PRJ_DIR --wsgi-file $WSGI_PY"]
 
