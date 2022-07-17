@@ -4,7 +4,7 @@ USER root
 
 ENV DOCKER_DIR="./docker"
 ENV PRJ_DIR="/myproject"
-ENV COPY_DIR="/myproject"
+ENV COPY_DIR="./myproject"
 ENV WSGI_PY="myproject/wsgi.py"
 
 RUN apt-get update
